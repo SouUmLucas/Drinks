@@ -2,13 +2,16 @@ package fachada;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import core.Resultado;
+import model.Bebida;
 import model.Categoria;
 import model.EntidadeDominio;
+import dao.DAOBebidas;
 import dao.DAOCategorias;
 import dao.IDAO;
 
@@ -22,6 +25,7 @@ public class Fachada implements IFachada {
 		
 		// put all your daos here!
 		daos.put(Categoria.class.getName(), new DAOCategorias());
+		daos.put(Bebida.class.getName(), new DAOBebidas());
 	}
 
 	@Override
@@ -32,11 +36,11 @@ public class Fachada implements IFachada {
 		
 		if(msg == null) {
 			try {
+				java.util.Date utilDate = new java.util.Date();
+				entidade.setDtCadastro(new java.sql.Date(utilDate.getTime()));
 				IDAO dao = daos.get(nmClasse);
-				dao.inserir(entidade);
-				
 				List<EntidadeDominio> entidades = new ArrayList<EntidadeDominio>();	
-				entidades.add(entidade);
+				entidades.add(dao.inserir(entidade));
 				resultado.setEntidades(entidades);
 				
 			} catch (SQLException e) {
@@ -62,9 +66,8 @@ public class Fachada implements IFachada {
 			
 			try {
 				IDAO dao = daos.get(nmClasse);
-				dao.alterar(entidade);
 				List<EntidadeDominio> entidades = new ArrayList<EntidadeDominio>();
-				entidades.add(entidade);
+				entidades.add(dao.alterar(entidade));
 				resultado.setEntidades(entidades);
 				
 			} catch (SQLException e) {
@@ -106,12 +109,50 @@ public class Fachada implements IFachada {
 	@Override
 	public Resultado consultar(EntidadeDominio entidade) {
 		resultado = new Resultado();
+		List<EntidadeDominio> entidades = new ArrayList<EntidadeDominio>();
 		String nmClasse = entidade.getClass().getName();
 		
 		try {
 			IDAO dao = daos.get(nmClasse);
-			List<EntidadeDominio> entidades = new ArrayList<EntidadeDominio>();
 			entidades.add(dao.consultar(entidade));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Erro ao tentar consultar por uma categoria");
+		}
+		
+		resultado.setEntidades(entidades);
+		
+		return resultado;
+	}
+	
+	@Override
+	public Resultado visualizar(EntidadeDominio entidade) {
+		resultado = new Resultado();
+		List<EntidadeDominio> entidades = new ArrayList<EntidadeDominio>();
+		String nmClasse = entidade.getClass().getName();
+		
+		try {
+			IDAO dao = daos.get(nmClasse);
+			entidades.add(dao.consultar(entidade));
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Erro ao tentar consultar por uma categoria");
+		}
+		
+		resultado.setEntidades(entidades);
+		
+		return resultado;
+	}
+
+	@Override
+	public Resultado listar(EntidadeDominio entidade) {
+		resultado = new Resultado();
+		List<EntidadeDominio> entidades = new ArrayList<EntidadeDominio>();
+		String nmClasse = entidade.getClass().getName();
+		
+		try {
+			IDAO dao = daos.get(nmClasse);
+			resultado.setEntidades(dao.listar(entidade));
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("Erro ao tentar consultar por uma categoria");
@@ -130,5 +171,4 @@ public class Fachada implements IFachada {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

@@ -7,8 +7,8 @@ import model.EntidadeDominio;
 
 public interface IDAO {
 	
-	public void inserir(EntidadeDominio entidade) throws SQLException;
-	public void alterar(EntidadeDominio entidade) throws SQLException;
+	public EntidadeDominio inserir(EntidadeDominio entidade) throws SQLException;
+	public EntidadeDominio alterar(EntidadeDominio entidade) throws SQLException;
 	public void deletar(EntidadeDominio entidade) throws SQLException;
 	public EntidadeDominio consultar(EntidadeDominio entidade) throws SQLException;
 	public void procurar(EntidadeDominio entidade) throws SQLException;

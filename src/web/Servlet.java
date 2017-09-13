@@ -1,8 +1,10 @@
 package web;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,8 +14,11 @@ import command.ConsultarCommand;
 import command.ExcluirCommand;
 import command.ICommand;
 import command.InserirCommand;
+import command.ListarCommand;
+import command.VisualizarCommand;
 import core.Resultado;
 import model.EntidadeDominio;
+import viewhelper.BebidasVH;
 import viewhelper.CategoriasVH;
 import viewhelper.IViewHelper;
 
@@ -28,35 +33,43 @@ public class Servlet extends HttpServlet {
 		
 		// setup commands
 		commands = new HashMap<String, ICommand>();
-		commands.put("salvar", new InserirCommand());
-		commands.put("consultar", new ConsultarCommand());
-		commands.put("alterar", new AlterarCommand());
-		commands.put("excluir", new ExcluirCommand());
+		commands.put("SALVAR", new InserirCommand());
+		commands.put("CONSULTAR", new ConsultarCommand());
+		commands.put("VISUALIZAR", new VisualizarCommand());
+		commands.put("ALTERAR", new AlterarCommand());
+		commands.put("EXCLUIR", new ExcluirCommand());
+		commands.put("LISTAR", new ListarCommand());
 		
 		// setup view helpers
 		vhs = new HashMap<String, IViewHelper>();
 		vhs.put("/Drinks/CadastrarCategoria", new CategoriasVH());
+		vhs.put("/Drinks/CadastrarBebida", new BebidasVH());
 		
 	}
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) {
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		doProcessRequest(req, res);
 	}
 	
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse res) {
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		doProcessRequest(req, res);
 	}
 
-	private void doProcessRequest(HttpServletRequest req, HttpServletResponse res) {
+	private void doProcessRequest(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
 		String uri = req.getRequestURI();
 		IViewHelper vh = vhs.get(uri);
 		EntidadeDominio entidade = vh.getEntidade(req);
 		String operacao = req.getParameter("operacao");
 		ICommand command = commands.get(operacao);
-		Resultado resultado = command.execute(entidade);
 		
-		// redirect page
+		if(operacao.equals("INSERIR")) {
+			vh.setView(new Resultado(), req, res);
+		} else {
+			Resultado resultado = command.execute(entidade);
+			vh.setView(resultado, req, res);
+		}
+
 	}
 }

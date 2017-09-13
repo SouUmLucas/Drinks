@@ -1,7 +1,7 @@
 package dao;
 
+import java.sql.*;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,19 +14,25 @@ import model.EntidadeDominio;
 public class DAOCategorias implements IDAO {
 
 	@Override
-	public void inserir(EntidadeDominio entidade) throws SQLException {
+	public EntidadeDominio inserir(EntidadeDominio entidade) throws SQLException {
 		Categoria categoria = (Categoria) entidade;
 		String sql = "INSERT INTO categorias(descricao, diasValidade, dtCadastro) VALUES (?, ?, ?)";
 		
 		try {
 			
 			Connection conn = BDConnection.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
+			PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			ps.setString(1, categoria.getDescricao());
 			ps.setInt(2, categoria.getDiasValidade());
-			ps.setDate(3, (Date) categoria.getDtCadastro());
+			Timestamp time = new Timestamp(categoria.getDtCadastro().getTime());
+			ps.setTimestamp(3, time);
 			
-			ps.executeUpdate();
+			if(ps.executeUpdate() > 0) {
+				ResultSet generatedkey = ps.getGeneratedKeys();
+				if(generatedkey.next()) {
+					categoria.setId(generatedkey.getInt(1));
+				}
+			}
 			ps.close();
 			conn.close();
 			
@@ -37,13 +43,15 @@ public class DAOCategorias implements IDAO {
 			e.printStackTrace();
 			System.out.println("Erro ao instanciar a classe do PostgreSQL");
 		}
+		
+		return categoria;
 	}
 
 	@Override
-	public void alterar(EntidadeDominio entidade) throws SQLException {
+	public EntidadeDominio alterar(EntidadeDominio entidade) throws SQLException {
 		
 		Categoria categoria = (Categoria) entidade;
-		String sql = "UPDATE categorias SET descricao = ?, diasValidade = ?, dtCadastro = ?";
+		String sql = "UPDATE categorias SET descricao = ?, diasValidade = ?, dtCadastro = ? WHERE id = ?";
 		
 		try {
 			
@@ -51,9 +59,16 @@ public class DAOCategorias implements IDAO {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, categoria.getDescricao());
 			ps.setInt(2, categoria.getDiasValidade());
-			ps.setDate(3, (Date) categoria.getDtCadastro());
+			Timestamp time = new Timestamp(categoria.getDtCadastro().getTime());
+			ps.setTimestamp(3, time);
+			ps.setInt(4, categoria.getId());
 			
-			ps.executeUpdate();
+			if(ps.executeUpdate() > 0) {
+				ResultSet generatedkey = ps.getGeneratedKeys();
+				if(generatedkey.next()) {
+					categoria.setId(generatedkey.getInt(1));
+				}
+			}
 			
 			ps.close();
 			conn.close();
@@ -65,6 +80,8 @@ public class DAOCategorias implements IDAO {
 			e.printStackTrace();
 			System.out.println("Erro ao instanciar a classe do PostgreSQL");
 		}
+		
+		return categoria;
 		
 	}
 
@@ -167,7 +184,7 @@ public class DAOCategorias implements IDAO {
 	@Override
 	public List<EntidadeDominio> listar(EntidadeDominio entidade) throws SQLException {
 		List<EntidadeDominio> categorias = new ArrayList<EntidadeDominio>();
-		String sql = "SELECT id, descricao, diasValidade, dtCadastro FROM categorias";
+		String sql = "SELECT id, descricao, diasValidade, dtCadastro FROM categorias ORDER BY id";
 		
 		try {
 			
