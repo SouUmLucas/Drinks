@@ -2,7 +2,6 @@ package fachada;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +21,12 @@ public class Fachada implements IFachada {
 	
 	private Map<String, IDAO> daos;
 	private Map<String, List<IStrategy>> rnsBebida;
+	private Map<String, Map<String, List<IStrategy>>> strategies;
 	Resultado resultado;
 	
 	public Fachada() {
 		daos = new HashMap<String, IDAO>();
+		strategies = new HashMap<String, Map<String,List<IStrategy>>>();
 		rnsBebida = new HashMap<String, List<IStrategy>>();
 		
 		// put all your daos here!
@@ -37,6 +38,7 @@ public class Fachada implements IFachada {
 		rnsSalvarBebida.add(new ValidadorTeorAlcool());
 		
 		rnsBebida.put("SALVAR", rnsSalvarBebida);
+		strategies.put(Bebida.class.getName(), rnsBebida);
 	}
 
 	@Override
@@ -179,16 +181,19 @@ public class Fachada implements IFachada {
 	}
 	
 	private String executarRegras(EntidadeDominio entidade, String operacao) {
-		List<IStrategy> strategies = rnsBebida.get(operacao);
-		
+		Map<String, List<IStrategy>> rnst = strategies.get(entidade.getClass().getName());
 		StringBuilder msg = new StringBuilder();
 		
-		if(strategies != null) {
-			for(IStrategy strategy : strategies) {
-				String m = strategy.processar(entidade);
-				if(m != null) {
-					msg.append(m);
-					msg.append("\n");
+		if (rnst != null) {
+			List<IStrategy> rns = rnst.get(operacao);
+			
+			if(rns != null) {
+				for(IStrategy strategy : rns) {
+					String m = strategy.processar(entidade);
+					if(m != null) {
+						msg.append(m);
+						msg.append("\n");
+					}
 				}
 			}
 		}
