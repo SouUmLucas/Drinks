@@ -11,6 +11,9 @@ import core.Resultado;
 import model.Bebida;
 import model.Categoria;
 import model.EntidadeDominio;
+import strategy.IStrategy;
+import strategy.ValidadorDataValidade;
+import strategy.ValidadorTeorAlcool;
 import dao.DAOBebidas;
 import dao.DAOCategorias;
 import dao.IDAO;
@@ -18,14 +21,22 @@ import dao.IDAO;
 public class Fachada implements IFachada {
 	
 	private Map<String, IDAO> daos;
+	private Map<String, List<IStrategy>> rnsBebida;
 	Resultado resultado;
 	
 	public Fachada() {
 		daos = new HashMap<String, IDAO>();
+		rnsBebida = new HashMap<String, List<IStrategy>>();
 		
 		// put all your daos here!
 		daos.put(Categoria.class.getName(), new DAOCategorias());
 		daos.put(Bebida.class.getName(), new DAOBebidas());
+		
+		List<IStrategy> rnsSalvarBebida = new ArrayList<IStrategy>();
+		rnsSalvarBebida.add(new ValidadorDataValidade());
+		rnsSalvarBebida.add(new ValidadorTeorAlcool());
+		
+		rnsBebida.put("SALVAR", rnsSalvarBebida);
 	}
 
 	@Override
@@ -167,8 +178,24 @@ public class Fachada implements IFachada {
 		return null;
 	}
 	
-	private String executarRegras(EntidadeDominio entidade, String string) {
-		// TODO Auto-generated method stub
-		return null;
+	private String executarRegras(EntidadeDominio entidade, String operacao) {
+		List<IStrategy> strategies = rnsBebida.get(operacao);
+		
+		StringBuilder msg = new StringBuilder();
+		
+		if(strategies != null) {
+			for(IStrategy strategy : strategies) {
+				String m = strategy.processar(entidade);
+				if(m != null) {
+					msg.append(m);
+					msg.append("\n");
+				}
+			}
+		}
+		
+		if(msg.length()>0)
+			return msg.toString();
+		else
+			return null;
 	}
 }

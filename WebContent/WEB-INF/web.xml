@@ -20,5 +20,6 @@
   <servlet-mapping>
     <servlet-name>Servlet</servlet-name>
     <url-pattern>/CadastrarCategoria</url-pattern>
+    <url-pattern>/CadastrarBebida</url-pattern>
   </servlet-mapping>
 </web-app>

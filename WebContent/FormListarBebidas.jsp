@@ -9,7 +9,7 @@
 <head>
 <META http-equiv="Content-Type" content="text/html; charset=utf-8">
 
-<title>:::: CONSULTAR PRODUTO::::</title>
+<title>:::: CONSULTAR BEBIDAS::::</title>
 </head>
 <body>
 
@@ -20,8 +20,6 @@
 	<form action="CadastrarCategoria" method="post">
 
 		<label for="txtId">Id:</label> <input type="text" id="txtId"
-			name="txtId" /> </br> <label for="txtDescricao">DESCRIÇÃO:</label> <input
-			type="text" id="txtDescricao" name="txtDescricao" /> <input
 			type="submit" id="operacao" name="operacao" value="CONSULTAR" />
 	</form>
 
@@ -43,8 +41,14 @@
    
    <TR>
       <TH>ID:</TH>
-      <TH>Descrição</TH>
-      <TH>Dias validade:</TH>
+      <TH>Nome</TH>
+      <TH>Fabricante</TH>
+      <TH>Fornecedor</TH>
+      <TH>Categoria</TH>
+      <TH>Data de fabricação</TH>
+      <TH>Data de validade</TH>
+      <TH>Teor de alcool</TH>
+      <TH>Data de cadastro</TH>
    </TR>
    
    
@@ -58,7 +62,7 @@
 		
 		if(entidades != null){
 			for (int i = 0; i < entidades.size(); i++) {
-				Categoria p = (Categoria) entidades.get(i);
+				Bebida p = (Bebida) entidades.get(i);
 				sbRegistro.setLength(0);
 				sbLink.setLength(0);
 				
@@ -67,7 +71,7 @@
 				sbRegistro.append("<TR ALIGN='CENTER'>");
 				
 				
-				sbLink.append("<a href=CadastrarCategoria?");
+				sbLink.append("<a href=CadastrarBebida?");
 					sbLink.append("txtId=");
 					sbLink.append(p.getId());						
 					sbLink.append("&");
@@ -84,13 +88,49 @@
 				
 				sbRegistro.append("<TD>");
 				sbRegistro.append(sbLink.toString());				
-				sbRegistro.append(p.getDescricao());
+				sbRegistro.append(p.getNome());
 				sbRegistro.append("</a>");				
 				sbRegistro.append("</TD>");
 				
 				sbRegistro.append("<TD>");
 				sbRegistro.append(sbLink.toString());				
-				sbRegistro.append(p.getDiasValidade());
+				sbRegistro.append(p.getFabricante());
+				sbRegistro.append("</a>");				
+				sbRegistro.append("</TD>");
+				
+				sbRegistro.append("<TD>");
+				sbRegistro.append(sbLink.toString());				
+				sbRegistro.append(p.getFornecedor());
+				sbRegistro.append("</a>");				
+				sbRegistro.append("</TD>");
+				
+				sbRegistro.append("<TD>");
+				sbRegistro.append(sbLink.toString());				
+				sbRegistro.append(p.getCategoria().getDescricao());
+				sbRegistro.append("</a>");				
+				sbRegistro.append("</TD>");
+				
+				sbRegistro.append("<TD>");
+				sbRegistro.append(sbLink.toString());				
+				sbRegistro.append(p.getDataFabricacao());
+				sbRegistro.append("</a>");				
+				sbRegistro.append("</TD>");
+				
+				sbRegistro.append("<TD>");
+				sbRegistro.append(sbLink.toString());				
+				sbRegistro.append(p.getDataValidade());
+				sbRegistro.append("</a>");				
+				sbRegistro.append("</TD>");
+				
+				sbRegistro.append("<TD>");
+				sbRegistro.append(sbLink.toString());				
+				sbRegistro.append(p.getTeorAlcool());
+				sbRegistro.append("</a>");				
+				sbRegistro.append("</TD>");
+				
+				sbRegistro.append("<TD>");
+				sbRegistro.append(sbLink.toString());				
+				sbRegistro.append(p.getDtCadastro());
 				sbRegistro.append("</a>");				
 				sbRegistro.append("</TD>");
 				

@@ -21,37 +21,30 @@
 	<form action="CadastrarCategoria" method="post">
 		<label for="txtId">Id:</label>
 		<input type="text" id="txtId" name="txtId" value=
-		
 		<%		
 			if(produto != null) out.print("'"+produto.getId()+"' readonly>"); 
 			else out.print(">"); 		
 		%>
-		
 		</input>
-		
 		
 		</br> 
 		
 		<label for="txtDescricao">Descrição:</label>
 		<input type="text" id="txtDescricao" name="txtDescricao" value=
-		
 		<%		
 			if(produto != null) 
 				out.print("'"+produto.getDescricao()+"'>"); 
 			else 
 				out.print(">"); 		
 		%>
-		
 		</input>
 		
 		<label for="txtQtd">Dias validade:</label>
 		<input type="text" id="txtDiasValidade" name="txtDiasValidade" value=
-		 
 		<%		
 			if(produto != null) out.print("'"+produto.getDiasValidade()+"'>"); 
 			else out.print(">"); 		
 		%>
-		
 		</input>
 		
 		
@@ -62,10 +55,6 @@
 				out.print("<label for='txtDtCadastro'>Data de Cadastro:</label>");
 				out.print("<input type='text' id='txtDtCadastro' name='txtDtCadastro' value='"+dtCadastro+"' readonly>");
 			}
-				
-				
-		
-		
 		%>
 		
 		</input>
